@@ -1,0 +1,53 @@
+# Copie este arquivo para .github/workflows/ na RAIZ do repositório do projeto.
+# Executa o Agente de Segurança a cada push (inclusive merges diretos na main).
+# É consultivo: o job nunca falha por causa de vulnerabilidades.
+name: Agente de Segurança
+
+on:
+  push:
+  workflow_dispatch: # execução sob demanda pela aba Actions
+
+permissions:
+  contents: read
+
+jobs:
+  analise:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    defaults:
+      run:
+        working-directory: agente-seguranca # pasta do agente dentro do repositório
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # histórico necessário para comparar com o push anterior
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar dependências do agente
+        run: npm ci || npm install
+
+      - name: Executar análise
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }} # opcional: Settings > Secrets > Actions
+        run: |
+          ANTES="${{ github.event.before }}"
+          if [ "${{ github.event_name }}" = "push" ] && [ -n "$ANTES" ] && [ "$ANTES" != "0000000000000000000000000000000000000000" ]; then
+            # apenas os arquivos alterados por todos os commits deste push
+            npx tsx src/cli.ts "$GITHUB_WORKSPACE" --desde "$ANTES" --gatilho push
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            npx tsx src/cli.ts "$GITHUB_WORKSPACE" --gatilho push   # branch nova: análise completa
+          else
+            npx tsx src/cli.ts "$GITHUB_WORKSPACE" --profundo
+          fi
+          cat "$GITHUB_WORKSPACE/relatorios-seguranca/ultimo.md" >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Publicar relatório
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-seguranca-${{ github.sha }}
+          path: relatorios-seguranca/
+          if-no-files-found: ignore

@@ -1,0 +1,36 @@
+{
+  "name": "agente-seguranca",
+  "version": "1.0.0",
+  "description": "Agente de Segurança genérico e reutilizável: auditoria de vulnerabilidades com regras determinísticas + LLM (Pipe-and-Filter).",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "engines": {
+    "node": ">=20.12"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "analisar": "tsx src/cli.ts",
+    "servidor": "tsx src/servidor.ts",
+    "start": "node dist/servidor.js",
+    "test": "tsx --test tests/*.test.ts",
+    "instalar-hook": "sh scripts/instalar-hook.sh"
+  },
+  "keywords": ["seguranca", "owasp", "sast", "llm", "agente"],
+  "license": "MIT",
+  "peerDependencies": {
+    "express": ">=4"
+  },
+  "peerDependenciesMeta": {
+    "express": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

@@ -1,0 +1,4 @@
+# Padrões (estilo glob) ignorados pelo Agente de Segurança
+# Testes do próprio agente contêm código vulnerável de propósito
+tests/
+relatorios-seguranca/

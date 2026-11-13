@@ -1,0 +1,7 @@
+node_modules/
+dist/
+relatorios-seguranca/
+.env
+.env.*
+!.env.example
+tests/fixtures/app-vulneravel/.env

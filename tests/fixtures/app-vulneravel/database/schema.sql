@@ -1,0 +1,17 @@
+CREATE TABLE usuarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(120) NOT NULL,
+  senha VARCHAR(32) NOT NULL,
+  perfil VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE alunos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(120) NOT NULL,
+  cpf CHAR(11) NOT NULL,
+  data_nascimento DATE,
+  telefone VARCHAR(20)
+);
+
+CREATE USER 'app'@'%' IDENTIFIED BY 'app123';
+GRANT ALL PRIVILEGES ON *.* TO 'app'@'%';
